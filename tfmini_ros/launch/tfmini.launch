@@ -1,8 +1,13 @@
 <launch>
-  <node pkg="tfmini_ros" type="tfmini_ros_node" name="tfmini_ros_node">
-    <param name="serial_port" type="string" value="/dev/ttyUSB0" />
+  <arg name="serial_port" default="/dev/ttyUSB0" />
+  <arg name="prefix" default="" />
+  <arg name="frame_id" default="tfmini$(arg prefix)_link" />
+  <arg name="transform_args" default="0 0 0 0 0 0 base_link" />
+  <node pkg="tfmini_ros" type="tfmini_ros_node" name="tfmini_ros_node$(arg prefix)">
+    <param name="serial_port" type="string" value="$(arg serial_port)" />
     <param name="baud_rate" type="int" value="115200" />
+    <param name="frame_id" type="string" value="$(arg frame_id)" />
   </node>
   
-  <node pkg="tf" type="static_transform_publisher" name="broadcasterTFmini" args="0 0 0 0 0 0 base_link TFmini 100" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="broadcaster_tfmini$(arg prefix)" args="$(arg transform_args) $(arg frame_id)" />
 </launch>

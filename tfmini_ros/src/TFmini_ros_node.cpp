@@ -4,16 +4,17 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "tfmini_ros_node");
   ros::NodeHandle nh("~");
-  std::string id = "TFmini";
+  std::string id;
   std::string portName;
   int baud_rate;
   benewake::TFmini *tfmini_obj;
 
   nh.param("serial_port", portName, std::string("/dev/ttyUSB0"));
   nh.param("baud_rate", baud_rate, 115200);
+  nh.param("frame_id", id, std::string(""));
 
   tfmini_obj = new benewake::TFmini(portName, baud_rate);
-  ros::Publisher pub_range = nh.advertise<sensor_msgs::Range>(id, 1000, true);
+  ros::Publisher pub_range = nh.advertise<sensor_msgs::Range>("range", 10, true);
   sensor_msgs::Range TFmini_range;
   TFmini_range.radiation_type = sensor_msgs::Range::INFRARED;
   TFmini_range.field_of_view = 0.04;
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
     }
     else if(dist == 0.0)
     {
-      ROS_ERROR_STREAM("Data validation error!");
+      ROS_ERROR_STREAM("[tfmini_ros] Data validation error. dist=0.0");
     }
   }
 
